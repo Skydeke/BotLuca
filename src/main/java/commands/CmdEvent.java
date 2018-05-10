@@ -61,7 +61,18 @@ public class CmdEvent implements Command {
                         maybeParticipants = "Niemand!";
                     } else {
                         for (String player : e.getParticipants()) {
-                            allParticipants = allParticipants + "  " + Main.jda.getUserById(player).getName();
+                            User p = Main.jda.getUserById(player);
+                            if (p != null){
+                                allParticipants = allParticipants + " " + p.getName();
+                            }else{
+                                e.removeParticipant(player);
+                                System.out.println("Removed Person with id: " + player + " from guild: " + event.getGuild().getName());
+                                try {
+                                    saveEvent(event.getGuild());
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
                         }
                         for (String p: e.getMaybes()){
                             maybeParticipants = maybeParticipants + " " + Main.jda.getUserById(p).getName();
