@@ -23,3 +23,6 @@ hs_err_pid*
 
 git rm --cached src/main/resources/Token.txt
 src/main/resources/Token.txt
+target/classes/Token.txt
+target/classes/Token.txt
+target/classes/Token.txt
