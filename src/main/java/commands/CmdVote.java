@@ -25,12 +25,10 @@ public class CmdVote implements Command, Serializable {
 
     @Override
     public int permission(int permissionStage) {
-        if (permissionStage == PermissionCore.VETERAN){
-            return PermissionCore.VETERAN;
-        }else if (permissionStage < PermissionCore.GENERAL){
+        if (permissionStage < PermissionCore.GENERAL){
             return PermissionCore.GENERAL;
         }
-        return 1;
+        return PermissionCore.MITGLIED;
     }
 
     @Override
@@ -42,23 +40,6 @@ public class CmdVote implements Command, Serializable {
     public void action(String[] args, MessageReceivedEvent event) {
             CHANNEL = event.getTextChannel();
 
-            if (args.length < 1) {
-                EmbedBuilder eb;
-                if (PermissionCore.checkWithoutWarning(event, PermissionCore.GENERAL)) {
-                    eb = new EmbedBuilder().setDescription("Vote-Hilfe").setColor(Color.cyan).addField("Vote-Befehle:",
-                            "Nutze *!vote create <Frage> |Antwort1|Antwort2* um eine Abstimmung zu starten. \n" +
-                                    "Nutze *!vote v <antwort>* um abzustimmen. \n" +
-                                    "Nutze *!vote stats* um den Fortschritt der Abstimmung zu sehen. \n" +
-                                    "Nutze *!vote close* um eine Abstimmung zu beenden.",true);
-                }else {
-                    eb = new EmbedBuilder().setDescription("Vote-Hilfe").setColor(Color.cyan).addField("Vote-Befehle:",
-                            "Nutze *!vote v <antwort>* um abzustimmen. \n" +
-                            "Nutze *!vote stats* um den Fortschritt der Abstimmung zu sehen.", true);
-                }
-                CHANNEL.sendMessage(eb.build()).queue();
-                return;
-            }
-
             switch (args[0]) {
 
                 case "create":
@@ -68,11 +49,15 @@ public class CmdVote implements Command, Serializable {
                     break;
 
                 case "v":
+                    if (PermissionCore.check(event, PermissionCore.MITGLIED)) {
                         votePoll(args, event);
+                    }
                     break;
 
                 case "stats":
+                    if (PermissionCore.check(event, PermissionCore.MITGLIED)) {
                         voteStats(event);
+                    }
                     break;
 
                 case "close":
@@ -194,11 +179,9 @@ public class CmdVote implements Command, Serializable {
                     "Nutze */vote v <antwort>* um abzustimmen. \n" +
                     "Nutze */vote stats* um den Fortschritt der Abstimmung zu sehen. \n" +
                     "Nutze */vote close* um eine Abstimmung zu beenden.";
-        }else if (permissionStage >= PermissionCore.NEULING){
-            return "Nutze */vote v <antwort>* um abzustimmen. \n" +
-                    "Nutze */vote stats* um den Fortschritt der Abstimmung zu sehen.";
         }
-        return "";
+        return "Nutze */vote v <antwort>* um abzustimmen. \n" +
+                    "Nutze */vote stats* um den Fortschritt der Abstimmung zu sehen.";
     }
 
     private static void message(String content, Color color) {
@@ -269,7 +252,7 @@ public class CmdVote implements Command, Serializable {
             event.getMessage().delete().queue();
             return;
         }
-        if (poll.tc.getName().equals(CHANNEL.getName())) {
+        if (event.getGuild().getTextChannelsByName(poll.tc, true).get(0).getName().equals(CHANNEL.getName())) {
             poll.votes.put(event.getAuthor().getId(), vote);
             POLLS.replace(event.getGuild(), poll);
         }else {
@@ -286,14 +269,14 @@ public class CmdVote implements Command, Serializable {
         private String heading;
         private List<String> answers;
         private HashMap<String, Integer> votes;
-        private TextChannel tc;
+        private String tc;
 
         private Poll(Member creator, String heading, List<String> answers, TextChannel creationChannel) {
             this.creator = creator.getUser().getId();
             this.heading = heading;
             this.answers = answers;
             this.votes = new HashMap<>();
-            this.tc = creationChannel;
+            this.tc = creationChannel.getId();
         }
 
         private Member getCreator(Guild guild) {

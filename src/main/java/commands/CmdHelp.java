@@ -10,7 +10,7 @@ import java.awt.*;
 public class CmdHelp implements Command {
     @Override
     public int permission(int permissionStage) {
-        return PermissionCore.NEULING;
+        return PermissionCore.MITGLIED;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class CmdHelp implements Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
-        if (PermissionCore.check(event, PermissionCore.NEULING)){
+        if (PermissionCore.check(event, PermissionCore.MITGLIED)){
             int playerPermissionStage = PermissionCore.getPermissionStage(event);
             String filterdHelp = "";
             int zähler = 1;

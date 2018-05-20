@@ -2,7 +2,6 @@ package commands;
 
 import core.Main;
 import core.PermissionCore;
-import eventcore.Time;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
@@ -26,7 +25,7 @@ public class CmdDuell implements Command {
 
     @Override
     public int permission(int permissionStage) {
-        return PermissionCore.NEULING;
+        return PermissionCore.MITGLIED;
     }
 
     @Override
@@ -36,7 +35,7 @@ public class CmdDuell implements Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
-        if(PermissionCore.check(event, PermissionCore.NEULING)){
+        if(PermissionCore.check(event, PermissionCore.MITGLIED)){
             String argsSTRG = String.join(" ", new ArrayList<>(Arrays.asList(args).subList(0, args.length)));
             List<String> content = Arrays.asList(argsSTRG.split("\\|"));
             User opponent = Main.jda.getUserById(content.get(0).replace("@", "")
@@ -127,7 +126,7 @@ public class CmdDuell implements Command {
 
     @Override
     public String help(int permissionStage) {
-        if (permissionStage >= PermissionCore.NEULING){
+        if (permissionStage >= PermissionCore.MITGLIED){
             return "Nutze /duell @luca407|<Schere/Stein/Papier> um Luca zu einem Duell herauszufordern!";
         }else{
             return null;

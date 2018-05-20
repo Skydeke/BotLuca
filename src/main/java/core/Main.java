@@ -1,6 +1,7 @@
 package core;
 
 import commands.*;
+import listeners.OnGuildLeaveHandler;
 import listeners.OnJoinListener;
 import listeners.OnMessageListener;
 import listeners.OnReactionHandler;
@@ -23,11 +24,12 @@ public class Main {
         builder.setAutoReconnect(true);
         builder.setStatus(OnlineStatus.ONLINE);
         builder.setAudioEnabled(true);
-        builder.setGame(Game.of(Game.GameType.STREAMING, "v1.5"));
+        builder.setGame(Game.of(Game.GameType.STREAMING, "v1.6"));
 
         builder.addEventListener(new OnJoinListener());
         builder.addEventListener(new OnMessageListener());
         builder.addEventListener(new OnReactionHandler());
+        builder.addEventListener(new OnGuildLeaveHandler());
 
         CommandHandler.COMMANDS.put("help", new CmdHelp());
         CommandHandler.COMMANDS.put("ping", new CmdPing());

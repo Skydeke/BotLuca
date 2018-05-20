@@ -247,7 +247,7 @@ public class CmdMusic implements Command {
 
     @Override
     public int permission(int stufe) {
-        return PermissionCore.VETERAN;
+        return PermissionCore.HUETER;
     }
 
     @Override
@@ -259,7 +259,7 @@ public class CmdMusic implements Command {
     public void action(String[] args, MessageReceivedEvent event) {
             GUILD = event.getGuild();
 
-            if (PermissionCore.check(event, PermissionCore.VETERAN)){
+            if (PermissionCore.check(event, PermissionCore.HUETER)){
 
                 if (args.length < 1) {
 
@@ -416,7 +416,7 @@ public class CmdMusic implements Command {
 
     @Override
     public String help(int stufe) {
-        if (stufe >= PermissionCore.VETERAN){
+        if (stufe >= PermissionCore.HUETER){
             return  "Nutze */m play <Link oder Suchanfrage>* oder *!m p <Link oder Suchanfrage>* um ein Lied in die Wiedergabeliste zu speichern. \n" +
                     "Nutze */m skip* oder *!m s* um ein Lied in der Wiedergabeliste zu überspringen. \n" +
                     "Nutze */m stop* um die Wiedergabe zu beenden. \n" +

@@ -5,14 +5,13 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-import javax.security.auth.Refreshable;
-
 public class PermissionCore {
 
     public static final int GAST = 2;
     public static final int VEX = 3;
-    public static final int NEULING = 4;
-    public static final int VETERAN = 5;
+    public static final int MITGLIED = 4;
+    public static final int HUETER = 5;
+    public static final int VETERAN = 6;
     public static final int GENERAL = 10;
     public static final int LENNY = 10;
     public static final int ENTWICKLER = 15;
@@ -29,9 +28,10 @@ public class PermissionCore {
                 berechtigung = VEX;
             }
             if (r.getName().contains(References.PERMS[0])){
-                berechtigung = NEULING;
-            }
-            if (r.getName().contains(References.PERMS[1])){
+                berechtigung = MITGLIED;
+            }if (r.getName().contains(References.PERMS[8])){
+                berechtigung = HUETER;
+            }if (r.getName().contains(References.PERMS[1])){
                 berechtigung = VETERAN;
             }if (r.getName().contains(References.PERMS[2]) || r.getName().contains(References.PERMS[5])){
                 berechtigung = GENERAL; //LENNY
@@ -61,9 +61,10 @@ public class PermissionCore {
                 berechtigung = VEX;
             }
             if (r.getName().contains(References.PERMS[0])){
-                berechtigung = NEULING;
-            }
-            if (r.getName().contains(References.PERMS[1])){
+                berechtigung = MITGLIED;
+            }if (r.getName().contains(References.PERMS[8])){
+                berechtigung = HUETER;
+            }if (r.getName().contains(References.PERMS[1])){
                 berechtigung = VETERAN;
             }if (r.getName().contains(References.PERMS[2]) || r.getName().contains(References.PERMS[5])){
                 berechtigung = GENERAL; //LENNY
@@ -96,9 +97,10 @@ public class PermissionCore {
                 berechtigung = VEX;
             }
             if (r.getName().contains(References.PERMS[0])){
-                berechtigung = NEULING;
-            }
-            if (r.getName().contains(References.PERMS[1])){
+                berechtigung = MITGLIED;
+            }if (r.getName().contains(References.PERMS[8])){
+                berechtigung = HUETER;
+            }if (r.getName().contains(References.PERMS[1])){
                 berechtigung = VETERAN;
             }if (r.getName().contains(References.PERMS[2]) || r.getName().contains(References.PERMS[5])){
                 berechtigung = GENERAL; //LENNY
@@ -127,9 +129,10 @@ public class PermissionCore {
                 berechtigung = VEX;
             }
             if (r.getName().contains(References.PERMS[0])){
-                berechtigung = NEULING;
-            }
-            if (r.getName().contains(References.PERMS[1])){
+                berechtigung = MITGLIED;
+            }if (r.getName().contains(References.PERMS[8])){
+                berechtigung = HUETER;
+            }if (r.getName().contains(References.PERMS[1])){
                 berechtigung = VETERAN;
             }if (r.getName().contains(References.PERMS[2]) || r.getName().contains(References.PERMS[5])){
                 berechtigung = GENERAL; //LENNY
