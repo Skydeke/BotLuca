@@ -4,7 +4,7 @@ import core.PermissionCore;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class CmdClear implements Command {
+public class CmdClear implements ICommand {
     @Override
     public int permission(int permissionStage) {
         return PermissionCore.ENTWICKLER;
@@ -36,6 +36,7 @@ public class CmdClear implements Command {
 
     @Override
     public String help(int permissionStage) {
-        return "Mit /clear <Zahl der Nachrichten> leerst du X-Nacgrichten von unten an.";
+        return "**Clear:**\n" +
+                ":white_small_square: Mit `/clear <Zahl der Nachrichten>` leerst du X-Nachrichten von unten an.";
     }
 }

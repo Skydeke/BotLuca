@@ -1,10 +1,7 @@
 package core;
 
 import commands.*;
-import listeners.OnGuildLeaveHandler;
-import listeners.OnJoinListener;
-import listeners.OnMessageListener;
-import listeners.OnReactionHandler;
+import listeners.*;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -24,12 +21,13 @@ public class Main {
         builder.setAutoReconnect(true);
         builder.setStatus(OnlineStatus.ONLINE);
         builder.setAudioEnabled(true);
-        builder.setGame(Game.of(Game.GameType.STREAMING, "v1.6"));
+        builder.setGame(Game.of(Game.GameType.STREAMING, "v1.8"));
 
         builder.addEventListener(new OnJoinListener());
         builder.addEventListener(new OnMessageListener());
         builder.addEventListener(new OnReactionHandler());
         builder.addEventListener(new OnGuildLeaveHandler());
+        builder.addEventListener(new AutoChannelHandler());
 
         CommandHandler.COMMANDS.put("help", new CmdHelp());
         CommandHandler.COMMANDS.put("ping", new CmdPing());
@@ -39,6 +37,7 @@ public class Main {
         CommandHandler.COMMANDS.put("remindme", new CmdRemindme());
         CommandHandler.COMMANDS.put("duell", new CmdDuell());
         CommandHandler.COMMANDS.put("clear", new CmdClear());
+        CommandHandler.COMMANDS.put("autochannel", new Autochannel());
 
 
         try {
@@ -46,6 +45,7 @@ public class Main {
             CmdVote.loadPolls(jda);
             CmdEvent.loadEvents(jda);
             CmdRemindme.loadReminds(jda);
+            Autochannel.load(jda);
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

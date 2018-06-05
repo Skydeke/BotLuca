@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class CmdRemindme implements Command {
+public class CmdRemindme implements ICommand {
 
     public static HashMap<String, HashMap<String, List<Reminder>>> ALLREMINDS = new HashMap<>();
     public static HashMap<String, List<ScheduledFuture>> ALLUSERSSCHEDUELEDREMINDERS = new HashMap<>();
@@ -206,9 +206,10 @@ public class CmdRemindme implements Command {
     @Override
     public String help(int permissionStage) {
         if (permissionStage >= PermissionCore.VETERAN) {
-            return "Nutze */remindme 06:04:2018:14:52|Einkaufen* um dich am 06.04.18 um 14 Uhr 52 ans Einkaufen zu erinnern. \n" +
-                    "Nutze */remindme delete 06:04:2018:14:52* um die Erinnerung am 06.04.18 um 14 Uhr 52 zu löschen. \n" +
-                    "Nutze */remindme show* um dir alle deine Erinnerungen zu zeigen.";
+            return  "**Reminders:**\n" +
+                    ":white_small_square: Nutze `/remindme 06:04:2018:14:52|Einkaufen` um dich am 06.04.18 um 14 Uhr 52 ans Einkaufen zu erinnern. \n" +
+                    ":white_small_square: Nutze `/remindme delete 06:04:2018:14:52` um die Erinnerung am 06.04.18 um 14 Uhr 52 zu löschen. \n" +
+                    ":white_small_square: Nutze `/remindme show` um dir alle deine Erinnerungen zu zeigen.";
         }else {
             return "";
         }

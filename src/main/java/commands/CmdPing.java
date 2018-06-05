@@ -3,7 +3,7 @@ package commands;
 import core.PermissionCore;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class CmdPing implements Command {
+public class CmdPing implements ICommand {
 
     @Override
     public int permission(int permissionStage) {
@@ -32,7 +32,8 @@ public class CmdPing implements Command {
     @Override
     public String help(int permissionStage) {
         if (permissionStage >= PermissionCore.MITGLIED){
-            return "Nutze /ping um deinen Ping anzeigen zu lassen.";
+            return "**Ping:**\n" +
+                    ":white_small_square: Nutze `/ping` um deinen Ping anzeigen zu lassen.";
         }else{
             return "";
         }

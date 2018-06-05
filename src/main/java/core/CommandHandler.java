@@ -1,13 +1,13 @@
 package core;
 
-import commands.Command;
+import commands.ICommand;
 
 import java.util.HashMap;
 
     public class CommandHandler {
 
         public static final CommandParser PARSER = new CommandParser();
-        public static HashMap<String, Command> COMMANDS = new HashMap<>();
+        public static HashMap<String, ICommand> COMMANDS = new HashMap<>();
 
         public static void handleCommand(CommandParser.commandContainer cmd) {
 

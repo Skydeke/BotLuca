@@ -1,7 +1,10 @@
 package eventcore;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class Time {
@@ -12,28 +15,25 @@ public class Time {
     public static int HOUR = 3;
     public static int MINUTES = 4;
 
-    public static String[] getTime() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yyyy:HH:mm");
-        String[] time = sdf.format(cal.getTime()).split("\\:");
-        return time;
-    }
 
     public static long getTimeDifferenceMinutes(String[] eventTime){
-        int[] currentTime = {Integer.parseInt(Time.getTime()[0].replace(" ", "")),
-                Integer.parseInt(Time.getTime()[1].replace(" ", "")),
-                Integer.parseInt(Time.getTime()[2].replace(" ", "")),
-                Integer.parseInt(Time.getTime()[3].replace(" ", "")),
-                Integer.parseInt(Time.getTime()[4].replace(" ", ""))};
         int[] evenTime = {Integer.parseInt(eventTime[0].replace(" ", "")),
-                Integer.parseInt(eventTime[1].replace(" ", "")),
+                Integer.parseInt(eventTime[1].replace(" ", "")) - 1,
                 Integer.parseInt(eventTime[2].replace(" ", "")),
                 Integer.parseInt(eventTime[3].replace(" ", "")),
                 Integer.parseInt(eventTime[4].replace(" ", ""))};
-        Date startDate = new Date(currentTime[YEAR], currentTime[MONTH], currentTime[DAY], currentTime[HOUR], currentTime[MINUTES]);
-        Date endDate   = new Date(evenTime[YEAR], evenTime[MONTH], evenTime[DAY], evenTime[HOUR], evenTime[MINUTES]);
 
-        long duration  = endDate.getTime() - startDate.getTime();
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTimeZone(TimeZone.getDefault());
+        Calendar endDate = Calendar.getInstance();
+        endDate.set(evenTime[YEAR], evenTime[MONTH], evenTime[DAY], evenTime[HOUR], evenTime[MINUTES]);
+        endDate.setTimeZone(TimeZone.getDefault());
+
+        System.out.println("Event starts at: " + startDate.getTime());
+
+        System.out.println("Event ends at: " + endDate.getTime());
+
+        long duration  = endDate.getTime().getTime() - startDate.getTime().getTime();
         long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
         System.out.println("Event is "+ diffInMinutes + " away!");
         return diffInMinutes;

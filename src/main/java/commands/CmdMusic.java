@@ -25,7 +25,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class CmdMusic implements Command {
+public class CmdMusic implements ICommand {
 
 
     private static final int PLAYLIST_LIMIT = 1000;
@@ -417,11 +417,12 @@ public class CmdMusic implements Command {
     @Override
     public String help(int stufe) {
         if (stufe >= PermissionCore.HUETER){
-            return  "Nutze */m play <Link oder Suchanfrage>* oder *!m p <Link oder Suchanfrage>* um ein Lied in die Wiedergabeliste zu speichern. \n" +
-                    "Nutze */m skip* oder *!m s* um ein Lied in der Wiedergabeliste zu überspringen. \n" +
-                    "Nutze */m stop* um die Wiedergabe zu beenden. \n" +
-                    "Nutze */m INFO* oder *!m now* um Informationen zu dem laufenden song zu bekommen. \n" +
-                    "Nutze */m playlist* um die Playlist zu sehen.";
+            return  "**Musik:**\n" +
+                    ":white_small_square: Nutze `/m play <Link oder Suchanfrage>` oder *!m p <Link oder Suchanfrage>* um ein Lied in die Wiedergabeliste zu speichern\n" +
+                    ":white_small_square: Nutze `/m s` um ein Lied in der Wiedergabeliste zu überspringen\n" +
+                    ":white_small_square: Nutze `/m stop` um die Wiedergabe zu beenden\n" +
+                    ":white_small_square: Nutze `/m now` um Informationen zu dem laufenden song zu bekommen\n" +
+                    ":white_small_square: Nutze `/m playlist` um die Playlist zu sehen";
         }else{
             return "";
         }

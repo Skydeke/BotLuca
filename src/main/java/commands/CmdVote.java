@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CmdVote implements Command, Serializable {
+public class CmdVote implements ICommand, Serializable {
 
     private static TextChannel CHANNEL;
     private static HashMap<Guild, Poll> POLLS = new HashMap<>();
@@ -175,13 +175,15 @@ public class CmdVote implements Command, Serializable {
     @Override
     public String help(int permissionStage) {
         if (permissionStage >= PermissionCore.GENERAL) {
-            return "Nutze */vote create <Frage> |Antwort1|Antwort2* um eine Abstimmung zu starten. \n" +
-                    "Nutze */vote v <antwort>* um abzustimmen. \n" +
-                    "Nutze */vote stats* um den Fortschritt der Abstimmung zu sehen. \n" +
-                    "Nutze */vote close* um eine Abstimmung zu beenden.";
+            return "**Vote:**\n" +
+                    ":white_small_square: Nutze `/vote create <Frage> |Antwort1|Antwort2` um eine Abstimmung zu starten\n" +
+                    ":white_small_square: Nutze `/vote v <antwort>` um abzustimmen\n" +
+                    ":white_small_square: Nutze `/vote stats` um den Fortschritt der Abstimmung zu sehen\n" +
+                    ":white_small_square: Nutze `/vote close` um eine Abstimmung zu beenden";
         }
-        return "Nutze */vote v <antwort>* um abzustimmen. \n" +
-                    "Nutze */vote stats* um den Fortschritt der Abstimmung zu sehen.";
+        return "**Vote:**\n" +
+                ":white_small_square: Nutze `/vote v <antwort>` um abzustimmen\n" +
+                ":white_small_square: Nutze `/vote stats` um den Fortschritt der Abstimmung zu sehen";
     }
 
     private static void message(String content, Color color) {

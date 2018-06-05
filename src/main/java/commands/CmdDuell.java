@@ -16,7 +16,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class CmdDuell implements Command {
+public class CmdDuell implements ICommand {
 
     private Player p1;
     private Player p2;
@@ -127,7 +127,8 @@ public class CmdDuell implements Command {
     @Override
     public String help(int permissionStage) {
         if (permissionStage >= PermissionCore.MITGLIED){
-            return "Nutze /duell @luca407|<Schere/Stein/Papier> um Luca zu einem Duell herauszufordern!";
+            return "**Duell:**\n" +
+                    ":white_small_square: Nutze `/duell @luca407|<Schere/Stein/Papier>` um Luca zu einem Duell herauszufordern";
         }else{
             return null;
         }

@@ -2,8 +2,8 @@ package commands;
 
 import core.Main;
 import core.PermissionCore;
-import eventcore.EventTimeChecker;
 import eventcore.Event;
+import eventcore.EventTimeChecker;
 import eventcore.Time;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class CmdEvent implements Command {
+public class CmdEvent implements ICommand {
 
     public static HashMap<Guild, List<Event>> EVENTS = new HashMap<>();
     public static HashMap<String, List<ScheduledFuture>> ALLSCHEDUELEDEVENTS = new HashMap<>();
@@ -49,6 +49,7 @@ public class CmdEvent implements Command {
         if (args.length < 1) {
             if (PermissionCore.check(event, PermissionCore.LENNY)) {
                 reprintAllEvents(event.getGuild());
+                return;
             }
         }
 
@@ -130,9 +131,11 @@ public class CmdEvent implements Command {
                 break;
 
             case "maybe":
-                Event e = EVENTS.get(event.getGuild()).get(Integer.parseInt(args[1].replace(" ", "")));
-                if (e != null){
-                    event.getChannel().sendMessage(getMaybeParsed(e, getMaybes(e, event.getGuild()), "Hier die Liste der Spieler die Vielleicht können: ").build()).queue();
+                if (args.length <= 2) {
+                    Event e = EVENTS.get(event.getGuild()).get(Integer.parseInt(args[1].replace(" ", "")));
+                    if (e != null) {
+                        event.getChannel().sendMessage(getMaybeParsed(e, getMaybes(e, event.getGuild()), "Hier die Liste der Spieler die Vielleicht können: ").build()).queue();
+                    }
                 }
                 break;
             case "createrepeatable":
@@ -154,7 +157,7 @@ public class CmdEvent implements Command {
                     temp.add(toAddEvent);
                     event.getChannel().sendMessage(getParsedEvent(toAddEvent, event.getGuild(), getParticipants(toAddEvent, event.getGuild()), getMaybes(toAddEvent, event.getGuild()),
                             "Das Event: " + toAddEvent.getName() + " wurde erfolgreich erstellt!").build()).queue();
-                    this.EVENTS.put(event.getGuild(), temp);
+                    EVENTS.put(event.getGuild(), temp);
                     EVENTS.forEach((g, poll) -> {
                         File path = new File("SERVER_SETTINGS/" + g.getId() + "/");
                         if (!path.exists())
@@ -183,16 +186,18 @@ public class CmdEvent implements Command {
     @Override
     public String help(int permissionStage) {
         if (permissionStage >= PermissionCore.GENERAL) {
-            return "Mit /event create 02:04:2018:20:08|<Titel>|<Beschreibung> erstellst du ein Event am 02.04.2018 um 20 Uhr und 08 Minuten! \n" +
-                    "Mit /event createRepeatable 02:04:2018:20:08|<Titel>|<Beschreibung> erstellst du ein Event am 02.04.2018 um 20 Uhr und 08 Minuten, das sich wöchentlich wiederhohlt! \n" +
-                    "Mit /event delete <ID> löscht du ein erstelltes Event! \n" +
-                    "Drücke auf ✅ im #event Kanal um beizutreten. \n" +
-                    "Drücke auf ⛔ im #event Kanal um das Event, egal für was du dich eingetragen hast, zu verlassen! \n" +
-                    "Drücke auf ❓ im #event Kanal um zu sagen ds du vielleicht kannst.";
+            return "**Events:**\n" +
+                    ":white_small_square: Mit `/event create 02:04:2018:20:08|<Titel>|<Beschreibung>` erstellst du ein Event am 02.04.2018 um 20 Uhr und 08 Minuten! \n" +
+                    ":white_small_square: Mit `/event createRepeatable 02:04:2018:20:08|<Titel>|<Beschreibung>` erstellst du ein Event am 02.04.2018 um 20 Uhr und 08 Minuten, das sich wöchentlich wiederhohlt! \n" +
+                    ":white_small_square: Mit `/event delete <ID>` löscht du ein erstelltes Event! \n" +
+                    ":white_small_square: Drücke auf ✅ im #event Kanal um beizutreten. \n" +
+                    ":white_small_square: Drücke auf ⛔ im #event Kanal um das Event, egal für was du dich eingetragen hast, zu verlassen! \n" +
+                    ":white_small_square: Drücke auf ❓ im #event Kanal um zu sagen ds du vielleicht kannst.";
         } else if (permissionStage >= PermissionCore.MITGLIED) {
-            return "Drücke auf ✅ im #event Kanal um beizutreten. \n" +
-                    "Drücke auf ⛔ im #event Kanal um das Event, egal für was du dich eingetragen hast, zu verlassen! \n" +
-                    "Drücke auf ❓ im #event Kanal um zu sagen ds du vielleicht kannst.";
+            return "**Events:**\n" +
+                    ":white_small_square: Drücke auf ✅ im #event Kanal um beizutreten. \n" +
+                    ":white_small_square: Drücke auf ⛔ im #event Kanal um das Event, egal für was du dich eingetragen hast, zu verlassen! \n" +
+                    ":white_small_square: Drücke auf ❓ im #event Kanal um zu sagen ds du vielleicht kannst.";
         } else {
             return null;
         }
@@ -273,6 +278,9 @@ public class CmdEvent implements Command {
                 for (String s : e.getParticipants()) {
                     names.add(s);
                 }
+                for (String s : e.getMaybes()) {
+                    names.add(s);
+                }
                 if (!(names.contains(author.getId()))) {
                     EVENTS.get(guild).get(id).addParticipant(author.getId());
                     allParticipants = getParticipants(e, guild);
@@ -310,52 +318,67 @@ public class CmdEvent implements Command {
 
     public static void removeMemberToEvent(int i, User user, Guild guild, String messageId) {
         Event e = EVENTS.get(guild).get(i);
-            if (e.getParticipants().contains(user.getId()) || e.getMaybes().contains(user.getId())) {
-                e.removeParticipant(user.getId());
-                e.getMaybes().remove(user.getId());
-                String allParticipants2 = getParticipants(e, guild);
-                user.openPrivateChannel().complete().sendMessage(getParsedEvent(e, guild, allParticipants2, getMaybes(e, guild), "Du hast das Event: " + e.getName() + " erfolgreich verlassen!").build()).queue();
-                for (String s : e.getParticipants()) {
-                    Main.jda.getUserById(s).openPrivateChannel().complete().sendMessage(user.getAsMention() + " Hat das Event verlassen.").queue();
-                }
-                try {
-                    saveEvent(guild);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                MessageChannel c = guild.getTextChannelsByName("event", true).get(0);
-                String allParticipants = getParticipants(e, guild);
-                Message m = c.getMessageById(messageId).complete();
-                m.editMessage(getParsedEvent(e, guild, allParticipants, getMaybes(e, guild), e.getName() + " ID: " + EVENTS.get(guild).indexOf(e)).build()).queue();
-            } else {
-                System.out.println(user.getName() + " hat versucht etwas zu verlassen das er nie betreten hat.");
-            }
-    }
-
-    public static void addMaybeToEvent(int id, User author, Guild guild, String messageId) {
-        if (PermissionCore.check(author, guild, PermissionCore.MITGLIED)) {
-            Event e = EVENTS.get(guild).get(id);
+        if (e.getParticipants().contains(user.getId()) || e.getMaybes().contains(user.getId())) {
+            e.removeParticipant(user.getId());
+            e.getMaybes().remove(user.getId());
             String allParticipants2 = getParticipants(e, guild);
-            if (e.getParticipants().size() >= 6) {
-                author.openPrivateChannel().complete().sendMessage(getParsedEvent(e, guild, allParticipants2, getMaybes(e, guild),
-                        "Du kanst dem Event: " + e.getName() + " nich beigetreten. Es ist schon voll! Du wurdest aber auf die Warteliste gesetzt!").build()).queue();
-                List names = new ArrayList();
-                for (String s : e.getParticipants()) {
-                    names.add(s);
-                }
-                List names2 = new ArrayList();
-                for (String s : e.getMaybes()) {
-                    names2.add(s);
-                }
-                if (!(names.contains(author.getId())) || !(names2.contains(author.getId()))) {
-                    e.addMaybeParticipant(author.getId());
-                }
+            user.openPrivateChannel().complete().sendMessage(getParsedEvent(e, guild, allParticipants2, getMaybes(e, guild), "Du hast das Event: " + e.getName() + " erfolgreich verlassen!").build()).queue();
+            for (String s : e.getParticipants()) {
+                Main.jda.getUserById(s).openPrivateChannel().complete().sendMessage(user.getAsMention() + " Hat das Event verlassen.").queue();
             }
             try {
                 saveEvent(guild);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+            MessageChannel c = guild.getTextChannelsByName("event", true).get(0);
+            String allParticipants = getParticipants(e, guild);
+            Message m = c.getMessageById(messageId).complete();
+            m.editMessage(getParsedEvent(e, guild, allParticipants, getMaybes(e, guild), e.getName() + " ID: " + EVENTS.get(guild).indexOf(e)).build()).queue();
+        } else {
+            System.out.println(user.getName() + " hat versucht etwas zu verlassen das er nie betreten hat.");
+        }
+    }
+
+    public static void addMaybeToEvent(int id, User author, Guild guild, String messageId) {
+        if (PermissionCore.check(author, guild, PermissionCore.MITGLIED)) {
+            System.out.println("Rights = true");
+            Event e = EVENTS.get(guild).get(id);
+            String allParticipants2 = getParticipants(e, guild);
+            if (e.getParticipants().size() >= 6) {
+                author.openPrivateChannel().complete().sendMessage(getParsedEvent(e, guild, allParticipants2, getMaybes(e, guild),
+                        "Du kanst dem Event: " + e.getName() + " nich beigetreten. Es ist schon voll! Du wurdest aber auf die Warteliste gesetzt!").build()).queue();
+            }
+
+            List<String> names = new ArrayList();
+            for (String s : e.getParticipants()) {
+                names.add(s);
+            }
+            for (String s : e.getMaybes()) {
+                names.add(s);
+            }
+            if (!(names.contains(author.getId()))) {
+                e.addMaybeParticipant(author.getId());
+            } else {
+                String[] fehlermeldungen = {" Ich weiß du bist dick aber du bist nich soo dick das du gleich 2 Plätze brauchst.",
+                        " So wie dein Arsch auch nur ne Sicherungskopie von deinem Gesicht ist, ist es dieser Versuch dich erneut einzutragen.",
+                        " Aber du weißt schon das du SCHON dabei bist ??.",
+                        " Du Scherzkecks bist schon dabei!"};
+                Random r = new Random();
+                int rando = (r.nextInt(fehlermeldungen.length - 1) + 0);
+                author.openPrivateChannel().queue((privateChannel -> {
+                    privateChannel.sendMessage(author.getAsMention() + fehlermeldungen[rando]
+                    ).queue();
+                }));
+            }
+            try {
+                saveEvent(guild);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            MessageChannel c = guild.getTextChannelsByName("event", true).get(0);
+            Message m = c.getMessageById(messageId).complete();
+            m.editMessage(getParsedEvent(e, guild, allParticipants2, getMaybes(e, guild), e.getName() + " ID: " + EVENTS.get(guild).indexOf(e)).build()).queue();
         }
     }
 
@@ -364,8 +387,8 @@ public class CmdEvent implements Command {
                 .setAuthor(Author)
                 .setTitle("Datum: " + Time.formatDate(e.getEventTime()) + " Zeit: " + Time.formatTime(e.getEventTime()))
                 .setDescription(e.getDescription())
-                .addField("","Spieler die Mitmachen(" + e.getParticipants().size() + ") : " + allParticipants, true)
-                .addField("","Spieler die vielleicht Mitmachen(" + e.getMaybes().size() + ") : " + maybes, true)
+                .addField("Spieler die Mitmachen(" + e.getParticipants().size() + ") : ", "" + allParticipants, true)
+                .addField("Spieler die vielleicht Mitmachen(" + e.getMaybes().size() + ") : ", "" + maybes, true)
                 .setFooter("Wöchentlich : " + e.isRepeatable() + "", null);
     }
 
@@ -397,11 +420,11 @@ public class CmdEvent implements Command {
             for (String player : e.getParticipants()) {
                 User p = Main.jda.getUserById(player);
                 if (p != null) {
-                    if (guild.getMember(p).getNickname() != null) {
-                        allParticipants = allParticipants + ", " + guild.getMember(p).getNickname();
-                    } else {
-                        allParticipants = allParticipants + ", " + p.getName();
-                    }
+                        if (guild.getMember(p).getNickname() != null) {
+                            allParticipants = allParticipants + guild.getMember(p).getNickname() + ", " ;
+                        } else {
+                            allParticipants = allParticipants + p.getName() + ", " ;
+                        }
                 } else {
                     e.removeParticipant(player);
                     System.out.println("Removed Person with id: " + player + " from guild: " + guild.getName());
@@ -425,9 +448,9 @@ public class CmdEvent implements Command {
                 User p = Main.jda.getUserById(player);
                 if (p != null) {
                     if (guild.getMember(p).getNickname() != null) {
-                        allParticipants = allParticipants + ", " + guild.getMember(p).getNickname();
+                        allParticipants = allParticipants + guild.getMember(p).getNickname() + ", " ;
                     } else {
-                        allParticipants = allParticipants + ", " + p.getName();
+                        allParticipants = allParticipants + p.getName() + ", " ;
                     }
                 } else {
                     e.removeParticipant(player);
@@ -448,7 +471,7 @@ public class CmdEvent implements Command {
                 .setAuthor(Author)
                 .setTitle("Datum: " + Time.formatDate(e.getEventTime()) + " Zeit: " + Time.formatTime(e.getEventTime()))
                 .setDescription(e.getDescription())
-                .addField("","Spieler die Mitmachen(" + e.getParticipants().size() + ") : " + maybes, true)
+                .addField("", "Spieler die vielleicht Mitmachen(" + e.getMaybes().size() + ") : " + maybes, true)
                 .setFooter("Wöchentlich : " + e.isRepeatable() + "", null);
     }
 }
